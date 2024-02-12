@@ -1,3 +1,4 @@
+pip==24.0
 altair==5.2.0
 annotated-types==0.6.0
 asttokens==2.4.1
