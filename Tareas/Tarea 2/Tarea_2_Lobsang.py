@@ -10,7 +10,7 @@ import pandas as pd
 st.title('Test Streamlit')
 
 # Agregar texto a la página
-st.write('Hello world mi nombre es Derek')
+st.write('Hello world mi nombre es Lobsang')
 
 # Agregar texto con formato Markdown a la página 
 st.markdown('# Titulo\n## Otra cosa\nSolo texto')
