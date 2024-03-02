@@ -9,12 +9,18 @@ import pandas as pd
 import math 
 import streamlit as st
 
-#Ponemos el título de la Práctica
+#Ponemos el título y nombre de la Práctica
 
 st.title('Examen Parcial 1 - Parte Práctica')
 st.subheader('por Lobsang Méndez - 202112428')
 
+#Descripcion del parcial (caption)
 
+multi1= '''En la siguiente página de Streamlit podrás calcular y graficar la distribución binomial para algún n y p dados.
+
+Pero antes se explicará un poco de  '''
+
+st.markdown(multi1)
 
 
 
