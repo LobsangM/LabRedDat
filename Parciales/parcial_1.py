@@ -138,27 +138,21 @@ eval_ = binomial(100,600,1/6,5/6)
 
 print(eval_)
 
+# Asignamos los valores del usuario a las variables
+
 n = n_valor
 p = p_valor
 q = (1-p_valor)
 
+#lista
+
 lista = np.arange(n+1)
 print(lista)
 
-#Esto es una lista
-#[3,4,5,6]
-
-# Esto es un diccionario
-#a = {'pc1':67, 'pc2':80}
-#print(a)
-#print(a['pc1'])
+#empezamos a armar la tabla
 
 data_table = pd.DataFrame({'x':lista})
 data_table['Nueva'] = data_table['x'] - 50
-
-# lambda
-#f = lambda x: x+1
-#print('Lambda:',f(7))
 
 data_table['Pb'] = data_table.apply(lambda row: binomial(row['x'],n,p,q), axis=1)
 
@@ -176,17 +170,17 @@ axis.plot(data_table['x'],data_table['Pb'],color='C1')
 
 binomial_plot.show()
 
-#############################################################################
-############################ STREAMLIT ######################################
-#############################################################################
+#mostrar la gráfica
 
-st.title('Graficos binomiales')
+st.subheader('Gráfica distribución binomial')
 
 st.pyplot(binomial_plot)
 
 
 
-
+#NOTA PARA JORGE: escogí utilizar st.slider para simplificar el codigo, ya que pude haber utilizado el comando "if", para hacer que
+#                 n fuera siempre un valor no muy elevado y lo mismo para p, pero me pareció una idea mas facil poner ese limite
+#                 al usuario sin tanta complicación.
 
 
 
