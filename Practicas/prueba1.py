@@ -7,4 +7,4 @@ import streamlit as st
 
 data_general = pd.read_csv('datos_generales.csv')
 
-print(data_general['Datos - Generales'])
+print(data_general['data'])
