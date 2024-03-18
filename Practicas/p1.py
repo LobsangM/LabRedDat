@@ -133,7 +133,7 @@ data_general = data_general.loc[:k]
 #esto nos da la frecuencia de cada valor de la columna
 
 #counts_non_sort_general = data_general[['Lobsang - Rebeca', 'Guillermo - Shawn', 'Diego - Saul', 'Giovanna - Mario', 'Dessiré - Fabricio', 'Jacobo - Cesar']].value_counts()
-counts_non_sort_general = data_general['Datos_generales'].value_counts()
+counts_non_sort_general = data_general['Datos - generales'].value_counts()
 counts_general = pd.DataFrame(np.zeros(11))
 
 #valores de columna
@@ -161,7 +161,7 @@ binomial_plot_general.add_bar(x=counts_general.index.values, y=counts_general[0]
 # Calculo de la desviacion estandar
 
 #desviacion_estandar_general = data_general[['Lobsang - Rebeca', 'Guillermo - Shawn', 'Diego - Saul', 'Giovanna - Mario', 'Dessiré - Fabricio', 'Jacobo - Cesar']].std()
-desviacion_estandar_general = data_general['Datos_generales'].std()
+desviacion_estandar_general = data_general['Datos - generales'].std()
 
 # Streamlit
 
