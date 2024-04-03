@@ -27,23 +27,11 @@ for index, row in data.iterrows():
 
         lista_fechas.extend([row['fecha']] * row['Casos por fecha de inicio de síntomas'])
 
-#print(lista_fechas)    
+#print(lista_fechas)     
 
-
-def grafica(lista_fechas):
-
-    #definimos los ejes del histigrama y tomamos su frecuencia 
-    date, counts = np.unique(lista_fechas, return_counts=True)
-
-    #Configurar la figura y el histograma
-    plt.figure(figsize=(10, 6))
-    plt.bar(date, counts, color='blue')
-    plt.title('Histograma de Fechas Casos Covid 19')
-    plt.xlabel('Fechas')
-    plt.ylabel('Casos')
-    plt.xticks(rotation=90)
-
-    return plt
+lista_fechas=pd.DataFrame({'fecha': lista_fechas})
+fig = px.histogram(lista_fechas, x='fecha', title='Histograma de Casos covid')
+fig.update_layout(xaxis_title='Fechas', yaxis_title='Casos')
 
 
 #Streamlit
@@ -52,4 +40,4 @@ st.title('Histograma de Casos Covid')
 
 #Histograma
 
-st.pyplot(grafica(lista_fechas))
+st.plotly_chart(fig)
