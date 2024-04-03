@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 from scipy import optimize as sco
+from scipy import stats as sst
 import math
 import plotly.express as px
 import streamlit as st
@@ -174,3 +175,5 @@ st.write('El fit personalizado es:',fit_general)
 
 st.subheader('Desviación estándar de datos generales')
 st.write('La desviación estándar es:', desviacion_estandar_general)
+
+sst.fit(sst.binom, data)
