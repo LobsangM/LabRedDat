@@ -10,10 +10,11 @@ import math
 import plotly.express as px
 import matplotlib.pyplot as plt
 
+
 #Cargar el archivo csv y hacer que Pandas lea el archivo
 data = pd.read_csv('confirmados_fecha.csv')
+data_graf = pd.read_csv('confirmados_fecha.csv', usecols=[0,1,2], nrows=200, index_col=0)
 #print(f'data:\n{data}')
-
 
 #definimos una lista que será que lea scypi
 lista_fechas = []
@@ -27,11 +28,22 @@ for index, row in data.iterrows():
 
         lista_fechas.extend([row['fecha']] * row['Casos por fecha de inicio de síntomas'])
 
-#print(lista_fechas)     
+#valores de columna
+        
+print(lista_fechas)     
 
-lista_fechas=pd.DataFrame({'fecha': lista_fechas})
-fig = px.histogram(lista_fechas, x='fecha', title='Histograma de Casos covid')
+#Metemos la lista en un Data frame y realizamos la gráfica
+
+lista_fechas_df =pd.DataFrame({'fecha': lista_fechas})
+fig = px.histogram(lista_fechas_df, x='fecha', title='Histograma de Casos covid')
 fig.update_layout(xaxis_title='Fechas', yaxis_title='Casos')
+
+#fit en GNUPLOT
+
+
+
+
+
 
 
 #Streamlit
@@ -41,3 +53,8 @@ st.title('Histograma de Casos Covid')
 #Histograma
 
 st.plotly_chart(fig)
+
+
+
+
+
