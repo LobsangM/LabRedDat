@@ -4,6 +4,7 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from scipy.stats import poisson
 from scipy.optimize import curve_fit
@@ -185,6 +186,185 @@ def prueba_chi_cuadrado():
 if __name__ == '__main__':
     prueba_chi_cuadrado()
 
+
+
+###### CESIO - POISSON #####
+
+# Cargar los datos desde el archivo CSV
+data = pd.read_csv('radiacion.csv')
+
+# Ajustar la distribución de Poisson a los datos
+def poisson_fit_cesio(x, mu):
+    return poisson.pmf(x, mu)
+
+# Estimar el parámetro lambda (mu) para la distribución de Poisson
+mu_estimado_cesio = data['cesio'].mean()
+
+# Generar valores de x para la distribución de Poisson
+x = np.arange(350, max(data['cesio']) + 1)
+
+# Realizar el ajuste de la distribución de Poisson a los datos
+popt, pcov = curve_fit(poisson_fit_cesio, x, np.histogram(data['cesio'], bins=np.arange(350, max(data['cesio']) + 2))[0], p0=[mu_estimado_cesio])
+
+# Crear la figura con Plotly
+fig_cesio_poisson = go.Figure()
+
+# Agregar histograma de datos
+fig_cesio_poisson.add_trace(go.Histogram(x=data['cesio'], histnorm='probability density', name='Datos'))
+
+# Agregar línea de ajuste de Poisson
+fig_cesio_poisson.add_trace(go.Scatter(x=x, y=poisson_fit_cesio(x, *popt), mode='lines', name=f'Ajuste de Poisson ($\mu$={popt[0]:.2f})'))
+
+# Configurar diseño de la figura
+fig_cesio_poisson.update_layout(title='Histograma y ajuste de distribución de Poisson para Cesio',
+                  xaxis_title='Valores',
+                  yaxis_title='Frecuencia',
+                  legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+                  bargap=0.1,
+                  bargroupgap=0.05,
+                  template='plotly_white')
+
+# Mostrar la figura en Streamlit
+st.title("Gráfica decaimiento del Cesio con distribución de Poisson")
+st.plotly_chart(fig_cesio_poisson)
+
+
+
+
+####### Prueba de Chi-cuadrado para Cesio Poisson ######
+
+
+# Leer el archivo CSV
+df = pd.read_csv('radiacion.csv')
+
+# Obtener los datos de la columna 'Aire'
+datos_aire = df['cesio']
+
+# Definir los límites de los intervalos del histograma
+bin_edges_cesio = np.histogram_bin_edges(datos_aire, bins=20)
+
+# Calcular las frecuencias observadas
+frec_obs_cesio = np.histogram(datos_aire, bins=bin_edges_cesio)[0]
+
+# Calcular la media de los datos
+mu_cesio = datos_aire.mean()
+
+# Calcular las frecuencias esperadas usando la distribución de Poisson
+frec_esp = len(datos_aire) * np.diff(poisson.cdf(bin_edges_cesio, mu_cesio))
+
+# Realizar la prueba de chi-cuadrado
+chi_cuadrado, p_valor, grados_libertad = chi2_contingency([frec_obs_cesio, frec_esp])[:3]
+
+# Streamlit: Agregar entrada de texto para el umbral
+umbral_input = 0.95
+umbral = chi2.ppf(float(umbral_input), grados_libertad)
+
+st.subheader("Prueba del chi-cuadrado")
+
+
+# Imprimir los resultados
+st.write("Valor chi-cuadrado:", chi_cuadrado)
+st.write("P-valor:", p_valor)
+st.write("Grados de libertad:", grados_libertad)
+
+# Determinar si el ajuste es adecuado
+if chi_cuadrado < umbral:
+    st.write("El ajuste parece ser adecuado.")
+else:
+    st.write("El ajuste no parece ser adecuado.")
+
+
+
+
+######## Gráfica CESIO - GAUSS ######
+
+
+# Leer el archivo CSV
+df = pd.read_csv('radiacion.csv')
+
+# Obtener los datos de la columna 'Cesio'
+datos_cesio = df['cesio']
+
+# Calcular los parámetros de la distribución gaussiana
+mu_2_cesio, std = norm.fit(datos_cesio)
+
+# Calcular la distribución de la función de densidad de probabilidad gaussiana
+xmin, xmax = min(datos_cesio), max(datos_cesio)
+x = np.linspace(xmin, xmax, 100)
+p = norm.pdf(x, mu_2_cesio, std)
+
+# Crear el histograma usando Plotly
+histograma_cesio_gauss = go.Histogram(x=datos_cesio, nbinsx=20, histnorm='probability density', opacity=0.7, marker=dict(color='blue', line=dict(color='black', width=1)), name='Datos de radiación')
+
+# Crear la distribución de Gauss ajustada
+linea_gaussiana_cesio = go.Scatter(x=x, y=p, mode='lines', line=dict(color='black', width=2), name='Ajuste Gaussiano')
+
+# Crear la figura y añadir los trazos
+fig_cesio_gauss = go.Figure()
+fig_cesio_gauss.add_trace(histograma_cesio_gauss)
+fig_cesio_gauss.add_trace(linea_gaussiana_cesio)
+
+# Configurar el diseño del gráfico
+fig_cesio_gauss.update_layout(title='Histograma de datos de radiación y ajuste de Gauss para Cesio', xaxis=dict(title='Cesio'), yaxis=dict(title='Densidad de probabilidad'), legend=dict(x=0.7, y=1))
+
+# Mostrar el gráfico en Streamlit
+st.title("Gráfica decaimiento del Cesio con distribución de Gauss ")
+st.plotly_chart(fig_cesio_gauss)
+
+
+
+
+######### Prueba CHI-CUADRADO Cesio-gauss ######
+
+
+def prueba_chi_cuadrado():
+    # Leer el archivo CSV
+    df = pd.read_csv('radiacion.csv')
+
+    # Obtener los datos de la columna 'Aire'
+    datos_aire = df['cesio']
+
+    # Definir los límites de los intervalos del histograma
+    bin_edges = np.histogram_bin_edges(datos_aire, bins=20)
+
+    # Calcular las frecuencias observadas
+    frec_obs = np.histogram(datos_aire, bins=bin_edges)[0]
+
+    # Calcular los parámetros de la distribución gaussiana
+    mu, std = norm.fit(datos_aire)
+
+    # Definir el rango límite basado en la distribución gaussiana
+    limite_inferior = mu - 3 * std
+    limite_superior = mu + 3 * std
+
+    # Filtrar los bin_edges dentro del rango límite
+    bin_edges_filtrados = bin_edges[(bin_edges >= limite_inferior) & (bin_edges <= limite_superior)]
+
+    # Calcular las frecuencias esperadas usando la distribución gaussiana
+    frec_esp = len(datos_aire) * np.diff(norm.cdf(bin_edges_filtrados, mu, std))
+
+    # Realizar la prueba de chi-cuadrado
+    chi_cuadrado, p_valor = chi2_contingency([frec_obs[:len(bin_edges_filtrados)-1], frec_esp])[:2]
+
+
+    st.subheader("Prueba de Chi-cuadrado")
+
+    # Mostrar los resultados en Streamlit
+    st.write("Valor chi-cuadrado:", chi_cuadrado)
+    st.write("P-valor:", p_valor)
+
+    # Determinar si el ajuste es adecuado
+    umbral_aire_gauss = chi2.ppf(0.95, len(bin_edges_filtrados) - 1)
+    if chi_cuadrado < umbral_aire_gauss:
+        st.write("El ajuste parece ser adecuado.")
+    else:
+        st.write("El ajuste no parece ser adecuado.")
+
+if __name__ == '__main__':
+    prueba_chi_cuadrado()
+
+
+##########################################
 
 
 
