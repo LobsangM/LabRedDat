@@ -379,7 +379,7 @@ st.markdown("""El archivo que contenia los datos del experimento
 Se realizó esto con la finalidad de facilitar la lecutra de las columnas a la hora 
 de realizar los histogramas y los ajustes correspondientes. Dicha modificación ayudó a la hora
 de poder ejecutar el código de una manera mas fácil y rápida.
-            """)
+         """)
 
 
 
