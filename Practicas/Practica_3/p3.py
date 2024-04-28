@@ -99,9 +99,9 @@ st.write("Grados de libertad:", grados_libertad)
 
 # Determinar si el ajuste es adecuado
 if chi_cuadrado < umbral:
-    st.write("El ajuste parece ser adecuado.")
+    st.write("El ajuste parece ser adecuado por tener un valor cercano a 1.")
 else:
-    st.write("El ajuste no parece ser adecuado.")
+    st.write("El ajuste no parece ser adecuado por tener un valor alejado de 1.")
 
 
 
@@ -118,10 +118,10 @@ x = np.linspace(xmin, xmax, 100)
 p = norm.pdf(x, mu_2, std)
 
 # Crear el histograma usando Plotly
-histograma = go.Histogram(x=datos_aire, nbinsx=20, histnorm='probability density', opacity=0.7, marker=dict(color='blue', line=dict(color='black', width=1)), name='Datos de radiación')
+histograma = go.Histogram(x=datos_aire, nbinsx=20, histnorm='probability density', opacity=0.7, marker=dict(color='blue', line=dict(color='brown', width=1)), name='Datos de radiación')
 
 # Crear la distribución de Gauss ajustada
-linea_gaussiana = go.Scatter(x=x, y=p, mode='lines', line=dict(color='black', width=2), name='Ajuste Gaussiano')
+linea_gaussiana = go.Scatter(x=x, y=p, mode='lines', line=dict(color='red', width=2), name='Ajuste Gaussiano')
 
 # Crear la figura y añadir los trazos
 fig_aire_gauss = go.Figure()
@@ -179,9 +179,9 @@ def prueba_chi_cuadrado():
     # Determinar si el ajuste es adecuado
     umbral_aire_gauss = chi2.ppf(0.95, len(bin_edges_filtrados) - 1)
     if chi_cuadrado < umbral_aire_gauss:
-        st.write("El ajuste parece ser adecuado.")
+        st.write("El ajuste parece ser adecuado por tener un valor cercano a 1.")
     else:
-        st.write("El ajuste no parece ser adecuado.")
+        st.write("El ajuste no parece ser adecuado por tener un valor alejado a 1.")
 
 if __name__ == '__main__':
     prueba_chi_cuadrado()
@@ -294,10 +294,10 @@ x = np.linspace(xmin, xmax, 100)
 p = norm.pdf(x, mu_2_cesio, std)
 
 # Crear el histograma usando Plotly
-histograma_cesio_gauss = go.Histogram(x=datos_cesio, nbinsx=20, histnorm='probability density', opacity=0.7, marker=dict(color='blue', line=dict(color='black', width=1)), name='Datos de radiación')
+histograma_cesio_gauss = go.Histogram(x=datos_cesio, nbinsx=20, histnorm='probability density', opacity=0.7, marker=dict(color='blue', line=dict(color='brown', width=1)), name='Datos de radiación')
 
 # Crear la distribución de Gauss ajustada
-linea_gaussiana_cesio = go.Scatter(x=x, y=p, mode='lines', line=dict(color='black', width=2), name='Ajuste Gaussiano')
+linea_gaussiana_cesio = go.Scatter(x=x, y=p, mode='lines', line=dict(color='red', width=2), name='Ajuste Gaussiano')
 
 # Crear la figura y añadir los trazos
 fig_cesio_gauss = go.Figure()
@@ -358,7 +358,7 @@ def prueba_chi_cuadrado():
     if chi_cuadrado < umbral_aire_gauss:
         st.write("El ajuste parece ser adecuado.")
     else:
-        st.write("El ajuste no parece ser adecuado.")
+        st.write("El ajuste no parece ser adecuado por tener un valor alejado a 1.")
 
 if __name__ == '__main__':
     prueba_chi_cuadrado()
@@ -367,17 +367,74 @@ if __name__ == '__main__':
 ##########################################
 
 
+st.title("Discución de Resultados")
+
+st.subheader("Nombre de columnas en los datos")
+
+st.markdown("""El archivo que contenia los datos del experimento
+            no contaban con columnas con nombre, por lo tanto lo primero que
+            se realizó fue colocarle el nombre de "aire" y "cesio" a la primera y segunda
+            columna respectivamente.
+
+Se realizó esto con la finalidad de facilitar la lecutra de las columnas a la hora 
+de realizar los histogramas y los ajustes correspondientes. Dicha modificación ayudó a la hora
+de poder ejecutar el código de una manera mas fácil y rápida.
+            """)
 
 
 
+st.subheader("Gráficas de decaimiento del Aire")
+
+st.markdown("""Los datos obtenidos del decaimiento del aire se graficaron en un histograma
+            al cual se le aplicó primero un ajuste con el modelo matemático de la distribución
+            de Poisson. Luego de obtener la gráfica la distribución de Poisson aplicada a la gráfica
+            realizamos la prueba del "Chi-cuadrado" la cual nos dió un valor cercano a 1, por lo cual 
+            podemos afirmar que la distribución de Poisson es el modelo matemático mas acertado
+            para el decaimiento del aire.
+
+Ahora, luego del procedimiento anterior, se realizó la misma gráfica pero se le aplicó un ajuste
+de la forma de la distribución de Guass, cabe resaltar que la dicha gráfica quedó un poco diferente
+a la anterior debido a la cantidad de bines, desconocemos el por qué de esto pero si agrupabamos
+los datos igual que la gráfica anterior nos tiraba un error que no pudimos corregir, asi que la solución fue
+agrupar los datos de la forma que aparecen en la gráfica, igualmente no consideramos que esto podría generar
+algún tipo de error ya que los resultados fueron según lo esperado teóricamente.
+A partir de esto se realizó la prueba de "Chi-cuadrado" la cual no dió un valor alejado a 1 por lo cual este ajuste no se considera 
+el adecuado para estos datos.
+""")
 
 
 
+st.subheader("Gráficas de decaimiento del Cesio")
+
+st.markdown(""" Los datos obtenidos de la columna del "cesio" se graficaron y agruparon en un histograma
+            el cual le aplicamos la distribución de Poisson de primero, y vemos como la curva sigue la 
+            trayectoria de los datos. Luego le aplicamos la prueba del "Chi-cuadrado" y podemos ver que
+            nos dió el valor muy cercano a 1, por lo cual se puede concluir que la distribución de Poisson
+            ajusta muy bien los datos obtenidos del decaimiento del cesio.
+
+Luego del procedimiento anterior, volvimos a tener el problema que obtuvimos con la gráfica de los datos del 
+aire con la distribución de gauss, se tuvo que simplificar los bines para que los datos se obtuvieras de una manera
+que consideramos correcta. Le aplicamos la distribución de gauss a nuestro histograma y vemos que la distribución no se
+acomoda a los datos tan bien como la anterior. Como siguiente paso, le aplicamos la prueba de "chi-cuadrado" la cual nos dió un
+valor muy alejado del 1, lo cual nos dice que dichos datos no se ajustan muy bien a la distribución de Gauss.
+""")
 
 
 
+st.subheader("Conclusiones")
 
-
+st.markdown("""
+- La distribución de Poisson se ajustó muy bien a los datos obtenidos del decaimiento del aire ya que nos dió
+un valor cercano a 1 en la prueba del chi-cuadrado.
+- La distribución de Gauss no se ajustó bien a los datos obtenidos del decaimiento del aire, porque no dió un
+valor alejado de 1 en la prueba del chi-cuadrado.
+- Los datos obtenidos del decaimiento del cesio corresponden y se ajustan a la distribución de Poisson ya que
+el valor obtenido de la prueba de Chi-cuadrado fue cercano a 1.
+- Los datos obtenidos del decaimiento del cesio no corresponden y ni se ajustan a la distribución de Gauss ya que
+el valor obtenido de la prueba de Chi-cuadrado fue muy alejado a 1.
+- En general, el decaimiento del aire y del cesio, corresponde a una distribución de Poisson y no a la
+distribución de Gauss.
+            """)
 
 
 
