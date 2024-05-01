@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from scipy.stats import chi2
+
 
 # Parámetros del sistema
 N = 8  # Número de partículas (número de partículas por lado del cubo)
@@ -100,3 +102,26 @@ plt.show()
 print("Parámetros del ajuste:")
 print("a:", a_fit)
 print("b:", b_fit)
+
+# Calcular los residuos entre los datos y el ajuste
+residuals = np.array(entropies) - fit_func(np.array(range(1, num_steps + 1)), *popt)
+
+# Calcular el estadístico de Chi cuadrado
+chi_square = np.sum((residuals / np.std(entropies))**2)
+
+# Calcular los grados de libertad
+degrees_of_freedom = len(entropies) - len(popt)
+
+# Calcular el valor crítico de Chi cuadrado para un nivel de significancia dado
+significance_level = 0.05  # Por ejemplo, un nivel de significancia del 5%
+critical_value = chi2.ppf(1 - significance_level, degrees_of_freedom)
+
+# Imprimir el estadístico de Chi cuadrado y el valor crítico
+print("Estadístico de Chi cuadrado:", chi_square)
+print("Valor crítico de Chi cuadrado para", degrees_of_freedom, "grados de libertad:", critical_value)
+
+# Comparar el estadístico de Chi cuadrado con el valor crítico
+if chi_square < critical_value:
+    print("El ajuste es aceptable dado el nivel de significancia.")
+else:
+    print("El ajuste no es aceptable dado el nivel de significancia.")
