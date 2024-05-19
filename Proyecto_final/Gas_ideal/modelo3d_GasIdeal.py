@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 # Parámetros del sistema
 N = 8  # Número de partículas (número de partículas por lado del cubo)
@@ -33,11 +34,22 @@ def pressure(temperature):
 def entropy(velocities):
     return np.log(2 * np.pi * np.exp(1) * total_energy(velocities) / (3 * N**3))
 
-# Almacenar la entropía en cada paso de Monte Carlo
-entropies = []
+# Función para graficar las posiciones de las partículas en 3D
+def plot_positions_3d(positions, title):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(positions[:, 0], positions[:, 1], positions[:, 2], c='b')
+    ax.set_title(title)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    plt.show()
+
+# Energía cinética inicial
+initial_kinetic_energy = total_energy(velocities_initial)
 
 # Algoritmo de Monte Carlo
-num_steps = 1000  # Número de pasos de Monte Carlo
+num_steps = 5000  # Número de pasos de Monte Carlo
 for step in range(num_steps):
     # Seleccionar una partícula aleatoria
     particle_index = np.random.randint(N**3)
@@ -51,15 +63,18 @@ for step in range(num_steps):
         # Calcular el cambio en la energía cinética
         old_velocity = velocities_initial[particle_index]
         new_velocity = np.random.normal(0, np.sqrt(T), size=(3,))
-        delta_kinetic_energy = 0.5 * np.sum(new_velocity*2) - 0.5 * np.sum(old_velocity*2)
+        delta_kinetic_energy = 0.5 * np.sum(new_velocity**2) - 0.5 * np.sum(old_velocity**2)
         
         # Aceptar o rechazar el movimiento basado en el cambio en la energía
         if delta_kinetic_energy <= 0 or np.random.rand() < np.exp(-delta_kinetic_energy / T):
             positions_initial[particle_index] = new_position
             velocities_initial[particle_index] = new_velocity
-    
-    # Calcular la entropía en este paso
-    entropies.append(entropy(velocities_initial))
+
+# Energía cinética final
+final_kinetic_energy = total_energy(velocities_initial)
+
+# Entropía inicial
+initial_entropy = entropy(velocities_initial)
 
 # Calcular propiedades macroscópicas finales del sistema
 final_temperature = temperature(velocities_initial)
@@ -68,10 +83,33 @@ final_pressure = pressure(final_temperature)
 # Imprimir resultados
 print("Temperatura final:", final_temperature)
 print("Presión final:", final_pressure)
+print("Energía cinética inicial:", initial_kinetic_energy)
+print("Energía cinética final:", final_kinetic_energy)
+print("Entropía inicial:", initial_entropy)
 
-# Graficar la entropía en función del tiempo
-plt.plot(range(num_steps), entropies)
-plt.xlabel('Número de pasos de Monte Carlo')
-plt.ylabel('Entropía')
-plt.title('Entropía vs. Tiempo')
-plt.show()
+# Graficar las posiciones inicial y final de las partículas en 3D
+plot_positions_3d(positions_initial, "Initial Position")
+
+# Algoritmo de Monte Carlo para las posiciones finales
+for step in range(num_steps):
+    # Seleccionar una partícula aleatoria
+    particle_index = np.random.randint(N**3)
+    
+    # Generar un movimiento aleatorio para la partícula seleccionada
+    delta_position = np.random.uniform(-0.1, 0.1, size=(3,))
+    new_position = positions_initial[particle_index] + delta_position
+    
+    # Verificar si el movimiento propuesto está dentro del contenedor
+    if np.all(new_position >= 0) and np.all(new_position <= L):
+        # Calcular el cambio en la energía cinética
+        old_velocity = velocities_initial[particle_index]
+        new_velocity = np.random.normal(0, np.sqrt(T), size=(3,))
+        delta_kinetic_energy = 0.5 * np.sum(new_velocity**2) - 0.5 * np.sum(old_velocity**2)
+        
+        # Aceptar o rechazar el movimiento basado en el cambio en la energía
+        if delta_kinetic_energy <= 0 or np.random.rand() < np.exp(-delta_kinetic_energy / T):
+            positions_initial[particle_index] = new_position
+            velocities_initial[particle_index] = new_velocity
+
+# Graficar las posiciones finales de las partículas en 3D
+plot_positions_3d(positions_initial, "Final Position")
