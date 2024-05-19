@@ -73,7 +73,7 @@ print("Presión final:", final_pressure)
 
 # Graficar la entropía en función del tiempo
 plt.plot(np.arange(len(entropies)) * intervalo_entropia, entropies)
-plt.xlabel('Tiempo de simulación')
-plt.ylabel('Entropía')
-plt.title('Entropía vs. Tiempo')
+plt.xlabel('Simulation Time')
+plt.ylabel('Entropy')
+plt.title('Entropy vs. Time')
 plt.show()
